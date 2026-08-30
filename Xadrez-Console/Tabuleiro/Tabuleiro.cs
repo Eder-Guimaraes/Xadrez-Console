@@ -1,11 +1,11 @@
 ﻿
-namespace Xadrez_Console.Tabuleiro
+namespace Xadrez_Console.tabuleiro
 {
     internal class Tabuleiro
     {
         public int Linhas { get; set; }
         public int Colunas { get; set; }
-        public Peca[,] Pecas { get; set; }
+        private Peca[,] Pecas { get; set; }
 
 
         public Tabuleiro(int linhas, int colunas)
@@ -13,6 +13,12 @@ namespace Xadrez_Console.Tabuleiro
             Linhas = linhas;
             Colunas = colunas;
             Pecas = new Peca[linhas, colunas];
+        }
+
+
+        public Peca Peca(int linha, int coluna)
+        {
+            return Pecas[linha, coluna];
         }
     }
 }
