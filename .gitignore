@@ -1,0 +1,6 @@
+# Pasta do Visual Studio
+.vs/
+
+# Arquivos compilados
+bin/
+obj/
