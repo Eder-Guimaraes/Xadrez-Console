@@ -13,24 +13,27 @@ namespace Xadrez_Console
         {
             try
             {
-                Tabuleiro tabuleiro = new Tabuleiro(8, 8);
-                
-                tabuleiro.ColocarPeca(new Rei(Cor.Branca, tabuleiro), new Posicao(1, 6));
-                tabuleiro.ColocarPeca(new Bispo(Cor.Preta, tabuleiro), new Posicao(1, 3));
-                tabuleiro.ColocarPeca(new Torre(Cor.Branca, tabuleiro), new Posicao(7, 5));
+                PartidaXadrez partida = new PartidaXadrez();
 
-                Tela.ImprimirTabuleiro(tabuleiro);
+                Tela.ImprimirTabuleiro(partida.Tabuleiro);
+
+                while (!partida.Terminada)
+                {
+                    Console.Clear();
+                    Tela.ImprimirTabuleiro(partida.Tabuleiro);
+
+                    Console.Write("Origem: ");
+                    Posicao origem = Tela.LerPosicaoXadrez().ToPosicao();
+                    Console.Write("Destino: ");
+                    Posicao destino = Tela.LerPosicaoXadrez().ToPosicao();
+
+                    partida.ExecutarMovimento(origem, destino);
+                }
             }
             catch (TabuleiroException ex)
             {
                 Console.WriteLine(ex.Message);
             }
-
-            PosicaoXadrez posicao = new PosicaoXadrez('a', 1);
-            Console.WriteLine(posicao);
-
-            Console.WriteLine(posicao.ToPosicao());
-
         }
     }
 }

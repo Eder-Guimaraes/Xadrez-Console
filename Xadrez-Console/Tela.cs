@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Xadrez_Console.tabuleiro;
+using Xadrez_Console.Xadrez;
 
 namespace Xadrez_Console
 {
@@ -25,6 +26,15 @@ namespace Xadrez_Console
                 Console.WriteLine();
             }
             Console.WriteLine("  a b c d e f g h");
+        }
+
+        public static PosicaoXadrez LerPosicaoXadrez()
+        {
+            string posicao = Console.ReadLine();
+            char letra = posicao[0];
+            int numero = int.Parse(posicao[1].ToString());
+
+            return new PosicaoXadrez(letra, numero);
         }
     }
 }
