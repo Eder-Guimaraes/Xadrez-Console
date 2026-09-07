@@ -1,5 +1,6 @@
-# Pasta do Visual Studio
+# Pasta do Visual Studio e Rider
 .vs/
+.idea/
 
 # Arquivos compilados
 bin/

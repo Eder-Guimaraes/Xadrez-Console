@@ -1,6 +1,7 @@
 ﻿using System;
 using Xadrez_Console.tabuleiro;
 using Xadrez_Console.Xadrez.Pecas;
+using Xadrez_Console.Exceptions;
 
 
 namespace Xadrez_Console.Xadrez
@@ -8,8 +9,8 @@ namespace Xadrez_Console.Xadrez
     internal class PartidaXadrez
     {
         public Tabuleiro Tabuleiro { get; private set; }
-        private int Turno { get; set; }
-        private Cor JogadorAtual { get; set; }
+        public int Turno { get; private set; }
+        public Cor JogadorAtual { get; private set; }
         public bool Terminada { get; private set; }
 
         public PartidaXadrez()
@@ -33,6 +34,51 @@ namespace Xadrez_Console.Xadrez
             }
 
             Tabuleiro.ColocarPeca(peca, destino);
+        }
+
+        public void RealizaJogada(Posicao origem, Posicao destino)
+        {
+            ExecutarMovimento(origem, destino);
+            Turno++;
+            MudarJogador();
+        }
+
+        private void MudarJogador()
+        {
+            if (JogadorAtual == Cor.Branca)
+            {
+                JogadorAtual = Cor.Preta;
+            }
+            else
+            {
+                JogadorAtual = Cor.Branca;
+            }
+        }
+
+        public void ValidarPosicaoOrigem(Posicao posicao)
+        {
+            if (Tabuleiro.Peca(posicao) == null)
+            {
+                throw new TabuleiroException("Não existe peça na posição de origem escolhida!");
+            }
+
+            if (JogadorAtual != Tabuleiro.Peca(posicao).Cor)
+            {
+                throw new TabuleiroException("A peça de origem escolhida não é sua!");
+            }
+
+            if (!Tabuleiro.Peca(posicao).ExisteMovimentosPossiveis())
+            {
+                throw new TabuleiroException("A peça não pode se mover!");
+            }
+        }
+
+        public void ValidarPosicaoDestino(Posicao origem, Posicao destino)
+        {
+            if(!Tabuleiro.Peca(origem).PodeMoverPara(destino))
+            {
+                throw new TabuleiroException("Posição de destino inválida!");
+            }
         }
 
         private void ColocarPecas()
