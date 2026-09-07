@@ -72,5 +72,11 @@ namespace Xadrez_Console.tabuleiro
                 throw new TabuleiroException("Posição inválida!");
             }
         }
+
+        public bool PodeMover(Posicao posicao)
+        {
+            ValidarPosicao(posicao);
+            return !ExistePeca(posicao);
+        }
     }
 }

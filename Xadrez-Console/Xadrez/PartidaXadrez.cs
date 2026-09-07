@@ -35,7 +35,7 @@ namespace Xadrez_Console.Xadrez
             Tabuleiro.ColocarPeca(peca, destino);
         }
 
-        private void ColocarPecas() 
+        private void ColocarPecas()
         {
             // Peças Brancas
             Tabuleiro.ColocarPeca(new Torre(Cor.Branca, Tabuleiro), new PosicaoXadrez('a', 1).ToPosicao());
