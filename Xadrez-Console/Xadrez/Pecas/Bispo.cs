@@ -15,7 +15,7 @@ namespace Xadrez_Console.Xadrez.Pecas
 
             //nordeste
             pos.DefinirValores(Posicao.Linha - 1, Posicao.Coluna + 1);
-            while (Tab.PosicaoValida(pos) && Tab.PodeMover(pos))
+            while (Tab.PosicaoValida(pos) && Tab.PodeMover(pos, Cor))
             {
                 mat[pos.Linha, pos.Coluna] = true;
                 if (Tab.Peca(pos) != null && Tab.Peca(pos).Cor != Cor)
@@ -28,7 +28,7 @@ namespace Xadrez_Console.Xadrez.Pecas
 
             //noroeste
             pos.DefinirValores(Posicao.Linha - 1, Posicao.Coluna - 1);
-            while (Tab.PosicaoValida(pos) && Tab.PodeMover(pos))
+            while (Tab.PosicaoValida(pos) && Tab.PodeMover(pos, Cor))
             {
                 mat[pos.Linha, pos.Coluna] = true;
                 if (Tab.Peca(pos) != null && Tab.Peca(pos).Cor != Cor)
@@ -41,7 +41,7 @@ namespace Xadrez_Console.Xadrez.Pecas
 
             //sudeste
             pos.DefinirValores(Posicao.Linha + 1, Posicao.Coluna + 1);
-            while (Tab.PosicaoValida(pos) && Tab.PodeMover(pos))
+            while (Tab.PosicaoValida(pos) && Tab.PodeMover(pos, Cor))
             {
                 mat[pos.Linha, pos.Coluna] = true;
                 if (Tab.Peca(pos) != null && Tab.Peca(pos).Cor != Cor)
@@ -54,7 +54,7 @@ namespace Xadrez_Console.Xadrez.Pecas
 
             //sudoeste
             pos.DefinirValores(Posicao.Linha + 1, Posicao.Coluna - 1);
-            while (Tab.PosicaoValida(pos) && Tab.PodeMover(pos))
+            while (Tab.PosicaoValida(pos) && Tab.PodeMover(pos, Cor))
             {
                 mat[pos.Linha, pos.Coluna] = true;
                 if (Tab.Peca(pos) != null && Tab.Peca(pos).Cor != Cor)

@@ -73,10 +73,11 @@ namespace Xadrez_Console.tabuleiro
             }
         }
 
-        public bool PodeMover(Posicao posicao)
+        public bool PodeMover(Posicao posicao, Cor cor)
         {
             ValidarPosicao(posicao);
-            return !ExistePeca(posicao);
+            Peca peca = Peca(posicao);
+            return peca == null || peca.Cor != cor;
         }
     }
 }

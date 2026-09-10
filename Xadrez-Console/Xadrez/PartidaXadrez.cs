@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xadrez_Console.tabuleiro;
 using Xadrez_Console.Xadrez.Pecas;
 using Xadrez_Console.Exceptions;
@@ -12,6 +13,8 @@ namespace Xadrez_Console.Xadrez
         public int Turno { get; private set; }
         public Cor JogadorAtual { get; private set; }
         public bool Terminada { get; private set; }
+        private HashSet<Peca> Pecas;
+        private HashSet<Peca> Capturadas;
 
         public PartidaXadrez()
         {
@@ -19,6 +22,8 @@ namespace Xadrez_Console.Xadrez
             Turno = 1;
             JogadorAtual = Cor.Branca;
             Terminada = false;
+            Pecas = new HashSet<Peca>();
+            Capturadas = new HashSet<Peca>();
             ColocarPecas();
         }
 
@@ -31,6 +36,7 @@ namespace Xadrez_Console.Xadrez
             if (Tabuleiro.ExistePeca(destino))
             {
                 pecaCapturada = Tabuleiro.RetirarPeca(destino);
+                Capturadas.Add(pecaCapturada);
             }
 
             Tabuleiro.ColocarPeca(peca, destino);
@@ -53,6 +59,37 @@ namespace Xadrez_Console.Xadrez
             {
                 JogadorAtual = Cor.Branca;
             }
+        }
+
+        public HashSet<Peca> PecasCapturadas(Cor cor)
+        {
+            HashSet<Peca> aux = new HashSet<Peca>();
+
+            foreach(Peca peca in Capturadas)
+            {
+                if (peca.Cor == cor)
+                {
+                    aux.Add(peca);
+                }
+            }
+
+            return aux;
+        }
+
+        public HashSet<Peca> PecasJogando(Cor cor)
+        {
+            HashSet<Peca> aux = new HashSet<Peca>();
+
+            foreach (Peca peca in Pecas)
+            {
+                if (peca.Cor == cor)
+                {
+                    aux.Add(peca);
+                }
+            }
+
+            aux.ExceptWith(PecasCapturadas(cor));
+            return aux;
         }
 
         public void ValidarPosicaoOrigem(Posicao posicao)
@@ -81,36 +118,42 @@ namespace Xadrez_Console.Xadrez
             }
         }
 
+        public void ColocarNovaPeca(char coluna, int linha, Peca peca)
+        {
+            Tabuleiro.ColocarPeca(peca, new PosicaoXadrez(coluna, linha).ToPosicao());
+            Pecas.Add(peca);
+        }
+
         private void ColocarPecas()
         {
             // Peças Brancas
-            Tabuleiro.ColocarPeca(new Torre(Cor.Branca, Tabuleiro), new PosicaoXadrez('a', 1).ToPosicao());
-            Tabuleiro.ColocarPeca(new Cavalo(Cor.Branca, Tabuleiro), new PosicaoXadrez('b', 1).ToPosicao());
-            Tabuleiro.ColocarPeca(new Bispo(Cor.Branca, Tabuleiro), new PosicaoXadrez('c', 1).ToPosicao());
-            Tabuleiro.ColocarPeca(new Dama(Cor.Branca, Tabuleiro), new PosicaoXadrez('d', 1).ToPosicao());
-            Tabuleiro.ColocarPeca(new Rei(Cor.Branca, Tabuleiro), new PosicaoXadrez('e', 1).ToPosicao());
-            Tabuleiro.ColocarPeca(new Bispo(Cor.Branca, Tabuleiro), new PosicaoXadrez('f', 1).ToPosicao());
-            Tabuleiro.ColocarPeca(new Cavalo(Cor.Branca, Tabuleiro), new PosicaoXadrez('g', 1).ToPosicao());
-            Tabuleiro.ColocarPeca(new Torre(Cor.Branca, Tabuleiro), new PosicaoXadrez('h', 1).ToPosicao());
+            ColocarNovaPeca('a', 1, new Torre(Cor.Branca, Tabuleiro));
+            ColocarNovaPeca('b', 1, new Cavalo(Cor.Branca, Tabuleiro));
+            ColocarNovaPeca('c', 1, new Bispo(Cor.Branca, Tabuleiro));
+            ColocarNovaPeca('d', 1, new Dama(Cor.Branca, Tabuleiro));
+            ColocarNovaPeca('e', 1, new Rei(Cor.Branca, Tabuleiro));
+            ColocarNovaPeca('f', 1, new Bispo(Cor.Branca, Tabuleiro));
+            ColocarNovaPeca('g', 1, new Cavalo(Cor.Branca, Tabuleiro));
+            ColocarNovaPeca('h', 1, new Torre(Cor.Branca, Tabuleiro));
 
             for (char c = 'a'; c <= 'h'; c++)
             {
-                Tabuleiro.ColocarPeca(new Peao(Cor.Branca, Tabuleiro), new PosicaoXadrez(c, 2).ToPosicao());
+                ColocarNovaPeca(c, 2, new Peao(Cor.Branca, Tabuleiro));
             }
 
             // Peças Pretas
-            Tabuleiro.ColocarPeca(new Torre(Cor.Preta, Tabuleiro), new PosicaoXadrez('a', 8).ToPosicao());
-            Tabuleiro.ColocarPeca(new Cavalo(Cor.Preta, Tabuleiro), new PosicaoXadrez('b', 8).ToPosicao());
-            Tabuleiro.ColocarPeca(new Bispo(Cor.Preta, Tabuleiro), new PosicaoXadrez('c', 8).ToPosicao());
-            Tabuleiro.ColocarPeca(new Dama(Cor.Preta, Tabuleiro), new PosicaoXadrez('d', 8).ToPosicao());
-            Tabuleiro.ColocarPeca(new Rei(Cor.Preta, Tabuleiro), new PosicaoXadrez('e', 8).ToPosicao());
-            Tabuleiro.ColocarPeca(new Bispo(Cor.Preta, Tabuleiro), new PosicaoXadrez('f', 8).ToPosicao());
-            Tabuleiro.ColocarPeca(new Cavalo(Cor.Preta, Tabuleiro), new PosicaoXadrez('g', 8).ToPosicao());
-            Tabuleiro.ColocarPeca(new Torre(Cor.Preta, Tabuleiro), new PosicaoXadrez('h', 8).ToPosicao());
+            ColocarNovaPeca('a', 8, new Torre(Cor.Preta, Tabuleiro));
+            ColocarNovaPeca('b', 8, new Cavalo(Cor.Preta, Tabuleiro));
+            ColocarNovaPeca('c', 8, new Bispo(Cor.Preta, Tabuleiro));
+            ColocarNovaPeca('d', 8, new Dama(Cor.Preta, Tabuleiro));
+            ColocarNovaPeca('e', 8, new Rei(Cor.Preta, Tabuleiro));
+            ColocarNovaPeca('f', 8, new Bispo(Cor.Preta, Tabuleiro));
+            ColocarNovaPeca('g', 8, new Cavalo(Cor.Preta, Tabuleiro));
+            ColocarNovaPeca('h', 8, new Torre(Cor.Preta, Tabuleiro));
 
             for (char c = 'a'; c <= 'h'; c++)
             {
-                Tabuleiro.ColocarPeca(new Peao(Cor.Preta, Tabuleiro), new PosicaoXadrez(c, 7).ToPosicao());
+                ColocarNovaPeca(c, 7, new Peao(Cor.Preta, Tabuleiro));
             }
         }
 

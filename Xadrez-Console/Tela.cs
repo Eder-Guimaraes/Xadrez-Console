@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Xadrez_Console.tabuleiro;
 using Xadrez_Console.Xadrez;
@@ -73,6 +74,38 @@ namespace Xadrez_Console
             {
                 Console.Write(peca + " ");
             }
+        }
+
+        public static void ImprimirPartida(PartidaXadrez partida)
+        {
+            Tela.ImprimirTabuleiro(partida.Tabuleiro);
+            Console.WriteLine();
+            ImprimirPecasCapturadas(partida);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine($"Turno: {partida.Turno}");
+            Console.WriteLine($"Jogador atual: {partida.JogadorAtual}");
+        }
+
+        public static void ImprimirPecasCapturadas(PartidaXadrez partida)
+        {
+            Console.WriteLine("Peças capturadas: ");
+            Console.Write("Brancas: ");
+            ImprimirConjunto(partida.PecasCapturadas(Cor.Branca));
+            Console.Write("Pretas: ");
+            ImprimirConjunto(partida.PecasCapturadas(Cor.Preta));
+        }
+
+        public static void ImprimirConjunto(HashSet<Peca> conjunto)
+        {
+            Console.Write('[');
+
+            foreach(Peca peca in conjunto)
+            {
+                Console.Write($"{peca} ");
+            }
+
+            Console.WriteLine(']');
         }
     }
 }
