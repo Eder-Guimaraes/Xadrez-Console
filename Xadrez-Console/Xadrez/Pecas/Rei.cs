@@ -11,7 +11,7 @@ namespace Xadrez_Console.Xadrez.Pecas
 
         public override string ToString()
         {
-            return Cor == Cor.Preta ? "♔" : "♚";
+            return Cor == Cor.Branca ? "♔" : "♚";
         }
 
         public override bool[,] MovimentosPossiveis()

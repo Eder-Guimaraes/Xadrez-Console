@@ -79,8 +79,15 @@ namespace Xadrez_Console.Xadrez
                 Xeque = false;
             }
 
-            Turno++;
-            MudarJogador();
+            if(EstaXequeMate(Adversario(JogadorAtual)))
+            {
+                Terminada = true;
+            }
+            else 
+            {
+                Turno++;
+                MudarJogador();
+            }
         }
 
         private void MudarJogador()
@@ -169,6 +176,37 @@ namespace Xadrez_Console.Xadrez
             }
 
             return false;
+        }
+
+        public bool EstaXequeMate(Cor cor)
+        {
+            if (!EstaXeque(cor))
+            {
+                return false;
+            }
+            foreach (Peca peca in PecasJogando(cor))
+            {
+                bool[,] mat = peca.MovimentosPossiveis();
+                for (int i = 0; i < Tabuleiro.Linhas; i++)
+                {
+                    for (int j = 0; j < Tabuleiro.Colunas; j++)
+                    {
+                        if (mat[i, j])
+                        {
+                            Posicao origem = peca.Posicao;
+                            Posicao destino = new Posicao(i, j);
+                            Peca pecaCapturada = ExecutarMovimento(origem, destino);
+                            bool testeXeque = EstaXeque(cor);
+                            DesfazerMovimento(origem, destino, pecaCapturada);
+                            if (!testeXeque)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         public void ValidarPosicaoOrigem(Posicao posicao)
