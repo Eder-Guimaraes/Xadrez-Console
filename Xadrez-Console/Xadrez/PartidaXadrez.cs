@@ -15,6 +15,7 @@ namespace Xadrez_Console.Xadrez
         public bool Terminada { get; private set; }
         private HashSet<Peca> Pecas;
         private HashSet<Peca> Capturadas;
+        public bool Xeque { get; private set; }
 
         public PartidaXadrez()
         {
@@ -22,12 +23,13 @@ namespace Xadrez_Console.Xadrez
             Turno = 1;
             JogadorAtual = Cor.Branca;
             Terminada = false;
+            Xeque = false;
             Pecas = new HashSet<Peca>();
             Capturadas = new HashSet<Peca>();
             ColocarPecas();
         }
 
-        public void ExecutarMovimento(Posicao origem, Posicao destino)
+        public Peca ExecutarMovimento(Posicao origem, Posicao destino)
         {
             Peca peca = Tabuleiro.RetirarPeca(origem);
             peca.IncrementarMovimentos();
@@ -40,11 +42,43 @@ namespace Xadrez_Console.Xadrez
             }
 
             Tabuleiro.ColocarPeca(peca, destino);
+
+            return pecaCapturada;
+        }
+
+        public void DesfazerMovimento(Posicao origem, Posicao destino, Peca pecaCapturada)
+        {
+            Peca peca = Tabuleiro.RetirarPeca(destino);
+            peca.DecrementarMovimentos();
+
+            if (pecaCapturada != null)
+            {
+                Tabuleiro.ColocarPeca(pecaCapturada, destino);
+                Capturadas.Remove(pecaCapturada);
+            }
+
+            Tabuleiro.ColocarPeca(peca, origem);
         }
 
         public void RealizaJogada(Posicao origem, Posicao destino)
         {
-            ExecutarMovimento(origem, destino);
+            Peca pecaCapturada = ExecutarMovimento(origem, destino);
+
+            if (EstaXeque(JogadorAtual))
+            {
+                DesfazerMovimento(origem, destino, pecaCapturada);
+                throw new TabuleiroException("Você não pode se colocar em xeque");
+            }
+
+            if (EstaXeque(Adversario(JogadorAtual)))
+            {
+                Xeque = true;
+            }
+            else
+            {
+                Xeque = false;
+            }
+
             Turno++;
             MudarJogador();
         }
@@ -65,7 +99,7 @@ namespace Xadrez_Console.Xadrez
         {
             HashSet<Peca> aux = new HashSet<Peca>();
 
-            foreach(Peca peca in Capturadas)
+            foreach (Peca peca in Capturadas)
             {
                 if (peca.Cor == cor)
                 {
@@ -92,6 +126,51 @@ namespace Xadrez_Console.Xadrez
             return aux;
         }
 
+        private Cor Adversario(Cor cor)
+        {
+            if (cor == Cor.Branca)
+            {
+                return Cor.Preta;
+            }
+            else
+            {
+                return Cor.Branca;
+            }
+        }
+
+        private Peca Rei(Cor cor)
+        {
+            foreach (Peca peca in PecasJogando(cor))
+            {
+                if (peca is Rei)
+                {
+                    return peca;
+                }
+            }
+            return null;
+        }
+
+        public bool EstaXeque(Cor cor)
+        {
+            Peca R = Rei(cor);
+            if (R == null)
+            {
+                throw new TabuleiroException($"Não existe rei no tabuleiro da cor {cor}");
+            }
+
+            foreach (Peca peca in PecasJogando(Adversario(cor)))
+            {
+                bool[,] mat = peca.MovimentosPossiveis();
+
+                if (mat[R.Posicao.Linha, R.Posicao.Coluna])
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public void ValidarPosicaoOrigem(Posicao posicao)
         {
             if (Tabuleiro.Peca(posicao) == null)
@@ -112,7 +191,7 @@ namespace Xadrez_Console.Xadrez
 
         public void ValidarPosicaoDestino(Posicao origem, Posicao destino)
         {
-            if(!Tabuleiro.Peca(origem).PodeMoverPara(destino))
+            if (!Tabuleiro.Peca(origem).PodeMoverPara(destino))
             {
                 throw new TabuleiroException("Posição de destino inválida!");
             }
