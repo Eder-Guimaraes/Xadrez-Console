@@ -4,14 +4,24 @@ namespace Xadrez_Console.Xadrez.Pecas
 {
     internal class Rei : Peca
     {
-        public Rei(Cor cor, Tabuleiro tabuleiro) : base(cor, tabuleiro)
+        private PartidaXadrez Partida;
+
+        public Rei(Cor cor, Tabuleiro tabuleiro, PartidaXadrez partida) : base(cor, tabuleiro)
         {
+            Partida = partida;
         }
 
 
         public override string ToString()
         {
             return Cor == Cor.Branca ? "♔" : "♚";
+        }
+
+        private bool TesteRoque(Posicao posicao)
+        {
+            Peca p = Tab.Peca(posicao);
+
+            return p != null && p is Torre && p.Cor == Cor && p.QtdeMovimentos == 0;
         }
 
         public override bool[,] MovimentosPossiveis()
@@ -73,6 +83,43 @@ namespace Xadrez_Console.Xadrez.Pecas
             if (Tab.PosicaoValida(pos) && Tab.PodeMover(pos, Cor))
             {
                 mat[pos.Linha, pos.Coluna] = true;
+            }
+
+             
+            //# jogadaespecial
+            if (QtdeMovimentos == 0 && !Partida.Xeque)
+            {
+                //# jogadaespecial roque pequeno
+                Posicao PosT1 = new Posicao(Posicao.Linha, Posicao.Coluna + 3);
+
+                if(TesteRoque(PosT1))
+                {
+                    Posicao p1 = new Posicao(Posicao.Linha, Posicao.Coluna + 1);
+                    Posicao p2 = new Posicao(Posicao.Linha, Posicao.Coluna + 2);
+
+                    if(Tab.Peca(p1) == null && Tab.Peca(p2) == null)
+                    {
+                        mat[Posicao.Linha, Posicao.Coluna + 2] = true;
+
+                    }
+                }
+
+
+                //# jogadaespecial roque grande
+                Posicao PosT2 = new Posicao(Posicao.Linha, Posicao.Coluna - 4);
+
+                if(TesteRoque(PosT2))
+                {
+                    Posicao p1 = new Posicao(Posicao.Linha, Posicao.Coluna - 1);
+                    Posicao p2 = new Posicao(Posicao.Linha, Posicao.Coluna - 2);
+                    Posicao p3 = new Posicao(Posicao.Linha, Posicao.Coluna - 3);
+
+                    if(Tab.Peca(p1) == null && Tab.Peca(p2) == null && Tab.Peca(p3) == null)
+                    {
+                        mat[Posicao.Linha, Posicao.Coluna - 2] = true;
+                        
+                    }
+                }
             }
 
             return mat;
