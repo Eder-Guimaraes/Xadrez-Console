@@ -1,12 +1,15 @@
 ﻿using Xadrez_Console.tabuleiro;
+using System;
 
 namespace Xadrez_Console.Xadrez.Pecas
 {
     internal class Peao : Peca
     {
-
-        public Peao(Cor cor, Tabuleiro tabuleiro) : base(cor, tabuleiro)
+        private PartidaXadrez Partida;
+        
+        public Peao(Cor cor, Tabuleiro tabuleiro, PartidaXadrez partida) : base(cor, tabuleiro)
         {
+            Partida = partida;
         }
 
         public override bool[,] MovimentosPossiveis()
@@ -40,6 +43,26 @@ namespace Xadrez_Console.Xadrez.Pecas
                 {
                     mat[pos.Linha, pos.Coluna] = true;
                 }
+                
+                //# jogada especial en passant (peão preto)
+                if (Posicao.Linha == 4
+                    && Partida.VulneravelElPasseant != null
+                    && Partida.VulneravelElPasseant is Peao
+                    && Partida.VulneravelElPasseant.Cor != Cor)
+                {
+                    Posicao posVulneravel = Partida.VulneravelElPasseant.Posicao;
+
+                    // o peão branco vulnerável tem que estar na MESMA linha do preto
+                    // e numa coluna vizinha (coluna - 1 ou coluna + 1)
+                    if (posVulneravel.Linha == Posicao.Linha
+                        && Math.Abs(posVulneravel.Coluna - Posicao.Coluna) == 1)
+                    {
+                        // destino do preto: uma casa "atrás" do branco (Linha + 1),
+                        // na coluna do branco
+                        Posicao destinoEp = new Posicao(Posicao.Linha + 1, posVulneravel.Coluna);
+                        mat[destinoEp.Linha, destinoEp.Coluna] = true;
+                    }
+                }
             }
             else
             {
@@ -66,6 +89,26 @@ namespace Xadrez_Console.Xadrez.Pecas
                 if (Tab.PosicaoValida(pos) && Tab.ExistePeca(pos) && Tab.Peca(pos).Cor != Cor)
                 {
                     mat[pos.Linha, pos.Coluna] = true;
+                }
+                
+                //# jogada especial en passant (peão branco)
+                if (Posicao.Linha == 3
+                    && Partida.VulneravelElPasseant != null
+                    && Partida.VulneravelElPasseant is Peao
+                    && Partida.VulneravelElPasseant.Cor != Cor)
+                {
+                    Posicao posVulneravel = Partida.VulneravelElPasseant.Posicao;
+
+                    // o peão preto vulnerável tem que estar na MESMA linha do branco
+                    // e numa coluna vizinha (coluna - 1 ou coluna + 1)
+                    if (posVulneravel.Linha == Posicao.Linha
+                        && Math.Abs(posVulneravel.Coluna - Posicao.Coluna) == 1)
+                    {
+                        // destino do branco: uma casa "atrás" do preto (Linha - 1),
+                        // na coluna do preto
+                        Posicao destinoEp = new Posicao(Posicao.Linha - 1, posVulneravel.Coluna);
+                        mat[destinoEp.Linha, destinoEp.Coluna] = true;
+                    }
                 }
             }
 
